@@ -17,7 +17,8 @@ public class Models
 
     public class Bill
     {
-        [Key] public int CompanyId { get; set; }
+        [Key] public int BillId { get; set; }
+        public int CompanyId { get; set; }
         public string Description { get; set; }
         public int Amount { get; set; }
         public string Email { get; set; }
@@ -25,7 +26,7 @@ public class Models
 
     public class Company // TODO delete?
     {
-        public int? CompanyId { get; set; }
+        [Key] public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
     }
 }

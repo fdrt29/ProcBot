@@ -95,10 +95,11 @@ namespace ProcBot
                 await sendTask;
                 return;
             }
+
             if (user?.State == State.WaitId)
             {
                 // TODO
-                if (ValidId(message.Text) == true)
+                if (await ValidId(message.Text) == true)
                 {
                     user.State = State.Identified;
                     await Program.Database.SaveChangesAsync(cancellationToken);
@@ -114,9 +115,12 @@ namespace ProcBot
             }
         }
 
-        private static bool ValidId(string messageText)
+        private static async ValueTask<bool> ValidId(string messageText)
         {
-            throw new NotImplementedException();
+            int id = Int32.Parse(messageText);
+            ValueTask<Models.Company> res = Program.Database.Companies.FindAsync(id);
+            if (id > 0 && await res != null) return true;
+            return false;
         }
 
         public static async Task HandleCallbackQueryAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery,
