@@ -16,7 +16,7 @@ public class WebhookController : Controller
     private static ITelegramBotClient _botClient;
 
     private static readonly List<Command>
-        Commands = Utils.InstantiateAllSubclasses<Command>(); // TODO mb find better place to store commands
+        Commands = Utils.InstantiateAllSubclasses<Command>();
 
     private static readonly List<InputHandler> InputHandlers = Utils.InstantiateAllSubclasses<InputHandler>();
     private readonly ILogger<WebhookController> _logger;
@@ -56,10 +56,7 @@ public class WebhookController : Controller
 
     public async Task<IActionResult> Do(Update update)
     {
-        // TODO потенциально затычка асинхронности
-        // TODO mb создавать по новому объекту комманды для запроса и ставить их на очередь пула потоков
-
-        User user = await Database.InsertUserIfNotExist(update.GetFromUniversal().Id);
+        User user = await Database.GetOrInsertUser(update.GetFromUniversal().Id);
         IHandler? handler = null;
         // Запуск цепочки ответственности
         if (update.GetDataUniversal().StartsWith("/"))
@@ -82,16 +79,9 @@ public class WebhookController : Controller
             }
 
         if (handler == null) return Ok();
-        // ыыыыыыыыыыы, благо автогенерация
-        (string? text, ParseMode? parseMode, IEnumerable<MessageEntity>? entities, bool? disableWebPagePreview,
-            bool? disableNotification, bool? protectContent, int? replyToMessageId, bool? allowSendingWithoutReply,
-            IReplyMarkup? replyMarkup) = Helpers.GetView(handler, user);
 
-        await _botClient.SendTextMessageAsync(update.GetMessageUniversal().Chat.Id, text, parseMode, entities,
-            disableWebPagePreview, disableNotification, protectContent, replyToMessageId, allowSendingWithoutReply,
-            replyMarkup);
-        
-        //return View(); // TODO можно посмотреть получится ли настроить поведение WebhookController так, чтобы возвращаемым View была строка сообщения
+        await _botClient.SendTextMessageAsync(update.GetMessageUniversal().Chat.Id, MessageView.GetView(handler, user));
+
         return Ok();
     }
 }
