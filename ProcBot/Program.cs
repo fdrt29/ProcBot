@@ -6,7 +6,7 @@ using Telegram.Bot.Examples.WebHook.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Данные хранятся в User Secrets - менеджере секретов VS
+// Данные бота хранятся в User Secrets - менеджере секретов VS. Остальное - в appsettings.json
 BotConfiguration? botConfig = builder.Configuration.GetSection("BotConfiguration").Get<BotConfiguration>();
 
 // There are several strategies for completing asynchronous tasks during startup.

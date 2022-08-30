@@ -1,5 +1,7 @@
-﻿using Telegram.Bot.Types;
+﻿using Telegram.Bot.Examples.WebHook.Views;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Bot.Examples.WebHook;
 
@@ -54,5 +56,18 @@ public static class Utils
         }
 
         return res;
+    }
+
+    public static async Task<Message> SendTextMessageAsync(this ITelegramBotClient botClient, ChatId chatId,
+        MessageView messageView)
+    {
+        // ыыыыыыыыыыы, благо автогенерация
+        (string? text, ParseMode? parseMode, IEnumerable<MessageEntity>? entities, bool? disableWebPagePreview,
+            bool? disableNotification, bool? protectContent, int? replyToMessageId, bool? allowSendingWithoutReply,
+            IReplyMarkup? replyMarkup) = messageView;
+
+        return await botClient.SendTextMessageAsync(chatId, text, parseMode, entities,
+            disableWebPagePreview, disableNotification, protectContent, replyToMessageId, allowSendingWithoutReply,
+            replyMarkup);
     }
 }
